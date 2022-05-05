@@ -16,19 +16,20 @@ public class TerminalModel implements Serializable {
 
     @Id
     @Column(name = "logic")
-    @JsonProperty("logic")
+    @JsonProperty(value = "logic", required = true)
     private Integer logic;
 
     @Column(name = "serial")
-    @JsonProperty("serial")
+    @JsonProperty(value = "serial", required = true)
     private String serial;
 
     @Column(name = "model")
-    @JsonProperty("model")
+    @JsonProperty(value = "model", required = true)
     private String model;
 
     @Column(name = "sam")
     @JsonProperty("sam")
+
     private Integer sam;
 
     @Column(name = "ptid")
@@ -40,7 +41,7 @@ public class TerminalModel implements Serializable {
     private Integer plat;
 
     @Column(name = "version")
-    @JsonProperty("version")
+    @JsonProperty(value = "version", required = true)
     private String version;
 
     @Column(name = "mxr")

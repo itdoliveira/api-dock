@@ -14,24 +14,41 @@ public class TerminalService {
 
     public String save(String body) {
 
-        TerminalModel terminalModel = converterJson(body);
+        TerminalModel terminalModel = convertJson(body);
         terminalRepository.save(terminalModel);
 
         return "Salvo";
     }
 
+    public String update(TerminalModel terminalModel, int logic) {
+
+        TerminalModel temp = terminalRepository.findByLogic(logic);
+
+        if (temp == null) {
+            return "Terminal não localizado";
+        }
+
+        if (terminalModel.getLogic() != logic) {
+            return "ID Diferentes";
+        } else {
+            terminalRepository.save(terminalModel);
+        }
+
+        return "Atualizado";
+    }
+
     public String[] splitText(String text) {
 
-        String[] textoSeparado = text.split(";");
+        String[] split = text.split(";");
 
-        if (textoSeparado != null && textoSeparado.length < 10) {
+        if (split != null && split.length < 10) {
             return null;
         }
 
-        return textoSeparado;
+        return split;
     }
 
-    public TerminalModel converterJson(String text) {
+    public TerminalModel convertJson(String text) {
 
         String[] textoSeparado = splitText(text);
 
