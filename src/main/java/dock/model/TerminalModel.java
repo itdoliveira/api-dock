@@ -1,5 +1,7 @@
 package dock.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,41 +9,66 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@Table
+@Table(name = "TerminalModel")
 public class TerminalModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "logic")
+    @JsonProperty("logic")
     private Integer logic;
 
     @Column(name = "serial")
+    @JsonProperty("serial")
     private String serial;
 
     @Column(name = "model")
+    @JsonProperty("model")
     private String model;
 
     @Column(name = "sam")
+    @JsonProperty("sam")
     private Integer sam;
 
     @Column(name = "ptid")
+    @JsonProperty("ptid")
     private String ptid;
 
     @Column(name = "plat")
+    @JsonProperty("plat")
     private Integer plat;
 
     @Column(name = "version")
+    @JsonProperty("version")
     private String version;
 
     @Column(name = "mxr")
+    @JsonProperty("mxr")
     private Integer mxr;
 
     @Column(name = "mxf")
+    @JsonProperty("mxf")
     private Integer mxf;
 
-    @Column(name = "PVERFM")
-    private String PVERFM;
+    @Column(name = "pverfm")
+    @JsonProperty("PVERFM")
+    private String pverfm;
+
+    public TerminalModel(){}
+
+    public TerminalModel(Integer logic, String serial, String model, Integer sam, String ptid, Integer plat, String version, Integer mxr, Integer mxf, String pverfm) {
+        this.logic = logic;
+        this.serial = serial;
+        this.model = model;
+        this.sam = sam;
+        this.ptid = ptid;
+        this.plat = plat;
+        this.version = version;
+        this.mxr = mxr;
+        this.mxf = mxf;
+        this.pverfm = pverfm;
+    }
 
     public Integer getLogic() {
         return logic;
@@ -115,11 +142,11 @@ public class TerminalModel implements Serializable {
         this.mxf = mxf;
     }
 
-    public String getPVERFM() {
-        return PVERFM;
+    public String getPverfm() {
+        return pverfm;
     }
 
-    public void setPVERFM(String PVERFM) {
-        this.PVERFM = PVERFM;
+    public void setPverfm(String pverfm) {
+        this.pverfm = pverfm;
     }
 }
