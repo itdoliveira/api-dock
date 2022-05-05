@@ -21,15 +21,21 @@ public class TerminalController {
         return terminalService.convertJson(body);
     }
 
-    @PostMapping(value = {"/cadastrar"}, consumes = {"text/html; charset=utf-8"}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = {"/register"}, consumes = {"text/html; charset=utf-8"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     public String cadastrar(@RequestBody @NotNull String body) {
         return terminalService.save(body);
     }
 
-    @PutMapping(value = {"/atualizar/{logic}"}, consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = {"/update/{logic}"}, consumes = {"text/html; charset=utf-8"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
-    public String update(@RequestBody @NotNull TerminalModel terminalModel, @PathVariable("logic") int logic) {
-        return terminalService.update(terminalModel, logic);
+    public String update(@RequestBody @NotNull String body, @PathVariable("logic") int logic) {
+        return terminalService.update(body, logic);
+    }
+
+    @PutMapping(value = {"/delete/{logic}"}, consumes = {"text/html; charset=utf-8"}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    public String update(@PathVariable("logic") int logic) {
+        return terminalService.delete(logic);
     }
 }

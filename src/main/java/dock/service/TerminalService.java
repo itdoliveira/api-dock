@@ -20,18 +20,20 @@ public class TerminalService {
         return "Salvo";
     }
 
-    public String update(TerminalModel terminalModel, int logic) {
+    public String update(String body, int logic) {
 
         TerminalModel temp = terminalRepository.findByLogic(logic);
+
+        TerminalModel tempBody = convertJson(body);
 
         if (temp == null) {
             return "Terminal não localizado";
         }
 
-        if (terminalModel.getLogic() != logic) {
+        if (tempBody.getLogic() != logic) {
             return "ID Diferentes";
         } else {
-            terminalRepository.save(terminalModel);
+            terminalRepository.save(tempBody);
         }
 
         return "Atualizado";
@@ -65,5 +67,10 @@ public class TerminalService {
                 .addMxf(Integer.parseInt(textoSeparado[8]))
                 .addPverfm(textoSeparado[9])
                 .build();
+    }
+
+    public String delete(int logic) {
+        terminalRepository.delete(logic);
+        return "Deletado!";
     }
 }
