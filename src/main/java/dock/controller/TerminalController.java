@@ -32,10 +32,4 @@ public class TerminalController {
     public String update(@RequestBody @NotNull String body, @PathVariable("logic") int logic) {
         return terminalService.update(body, logic);
     }
-
-    @PutMapping(value = {"/delete/{logic}"}, consumes = {"text/html; charset=utf-8"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseStatus(HttpStatus.OK)
-    public String update(@PathVariable("logic") int logic) {
-        return terminalService.delete(logic);
-    }
 }

@@ -6,6 +6,8 @@ import dock.repository.TerminalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 @Service
 public class TerminalService {
 
@@ -67,10 +69,5 @@ public class TerminalService {
                 .addMxf(Integer.parseInt(textoSeparado[8]))
                 .addPverfm(textoSeparado[9])
                 .build();
-    }
-
-    public String delete(int logic) {
-        terminalRepository.delete(logic);
-        return "Deletado!";
     }
 }
