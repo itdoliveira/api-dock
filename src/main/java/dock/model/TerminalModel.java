@@ -56,7 +56,8 @@ public class TerminalModel implements Serializable {
     @JsonProperty("PVERFM")
     private String pverfm;
 
-    public TerminalModel(){}
+    public TerminalModel() {
+    }
 
     public TerminalModel(Integer logic, String serial, String model, Integer sam, String ptid, Integer plat, String version, Integer mxr, Integer mxf, String pverfm) {
         this.logic = logic;
