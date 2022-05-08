@@ -42,6 +42,21 @@ public class TerminalService {
         }
     }
 
+    public ResponseEntity consult(int logic) {
+
+        TerminalModel temp = terminalRepository.findByLogic(logic);
+
+        if (temp == null) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body("Terminal não localizado! Por favor insira um numero logico cadastrado.");
+        }
+
+        return ResponseEntity
+                .ok()
+                .body(temp);
+    }
+
     public ResponseEntity update(String body, int logic) {
 
         TerminalModel temp = terminalRepository.findByLogic(logic);
@@ -50,7 +65,7 @@ public class TerminalService {
 
         if (temp == null) {
             return ResponseEntity
-                    .badRequest()
+                    .internalServerError()
                     .body("Terminal não localizado! Por favor insira um numero logico cadastrado.");
         }
 
