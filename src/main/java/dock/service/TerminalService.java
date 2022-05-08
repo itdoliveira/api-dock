@@ -4,9 +4,8 @@ import dock.model.TerminalModel;
 import dock.model.TerminalModelBuilder;
 import dock.repository.TerminalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.criteria.CriteriaBuilder;
 
 @Service
 public class TerminalService {
@@ -14,31 +13,58 @@ public class TerminalService {
     @Autowired
     TerminalRepository terminalRepository;
 
-    public String save(String body) {
+    public ResponseEntity convert(String body) {
+        try {
+            TerminalModel terminalModel = convertJsonToTerminalModel(body);
+            return ResponseEntity
+                    .accepted()
+                    .body(terminalModel);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body("Erro ao tentar converter as mensagem enviada. Erro: " + e);
+        }
 
-        TerminalModel terminalModel = convertJson(body);
-        terminalRepository.save(terminalModel);
-
-        return "Salvo";
     }
 
-    public String update(String body, int logic) {
+    public ResponseEntity save(String body) {
+        try {
+            TerminalModel terminalModel = convertJsonToTerminalModel(body);
+            terminalRepository.save(terminalModel);
+
+            return ResponseEntity
+                    .ok()
+                    .body("Terminal Salvo com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body("Erro ao tentar salvar o Terminal. Exception: " + e);
+        }
+    }
+
+    public ResponseEntity update(String body, int logic) {
 
         TerminalModel temp = terminalRepository.findByLogic(logic);
 
-        TerminalModel tempBody = convertJson(body);
+        TerminalModel tempBody = convertJsonToTerminalModel(body);
 
         if (temp == null) {
-            return "Terminal não localizado";
+            return ResponseEntity
+                    .badRequest()
+                    .body("Terminal não localizado! Por favor insira um numero logico cadastrado.");
         }
 
         if (tempBody.getLogic() != logic) {
-            return "ID Diferentes";
+            return ResponseEntity
+                    .badRequest()
+                    .body("Os numeros logicos não correspondem. Por favor, inserir o mesmo numero logico.");
         } else {
             terminalRepository.save(tempBody);
         }
 
-        return "Atualizado";
+        return ResponseEntity
+                .ok()
+                .body("Informações atualizadas com sucesso!");
     }
 
     public String[] splitText(String text) {
@@ -52,7 +78,7 @@ public class TerminalService {
         return split;
     }
 
-    public TerminalModel convertJson(String text) {
+    public TerminalModel convertJsonToTerminalModel(String text) {
 
         String[] textoSeparado = splitText(text);
 
