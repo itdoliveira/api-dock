@@ -2,9 +2,12 @@ package dock.controller;
 
 
 import dock.Application;
+import dock.exception.TerminalModelException;
 import dock.model.TerminalModel;
 import dock.model.TerminalModelBuilder;
+import dock.repository.TerminalRepository;
 import dock.service.TerminalService;
+import dock.service.TerminalUtilsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +38,12 @@ public class TerminalControllerTest {
 
     @MockBean
     private TerminalService terminalService;
+
+    @MockBean
+    private TerminalUtilsService utilsService;
+
+    @MockBean
+    private TerminalRepository terminalRepository;
 
     private String payloadTestRequest;
 
@@ -70,8 +79,7 @@ public class TerminalControllerTest {
                 .andReturn();
 
         assertEquals(200, mvcResult.getResponse().getStatus());
-        assertEquals("{\"logic\":44332213," + "\"serial\":\"123\"," + "\"model\":\"PWWIN\"," + "\"sam\":4," + "\"ptid\":\"F04A2E4088B\"," + "\"plat\":2," + "\"version\":\"8.00b3\"," + "\"mxr\":0," + "\"mxf\":16777216," + "\"PVERFM\":\"PWWIN\"}"
-                , mvcResult.getResponse().getContentAsString());
+        assertEquals(payloadTestResponse, mvcResult.getResponse().getContentAsString());
         verify(terminalService, times(1)).convert(payloadTestRequest);
     }
 
@@ -95,4 +103,54 @@ public class TerminalControllerTest {
     }
 
 
+    @Test
+    public void test_register_endpoint_success() throws Exception {
+
+        TerminalModel terminalModel = TerminalModelBuilder
+                .builder()
+                .addLogic(44332213)
+                .addSerial("123")
+                .addModel("PWWIN")
+                .addSam(4)
+                .addPtid("F04A2E4088B")
+                .addPlat(2)
+                .addVersion("8.00b3")
+                .addMxr(0)
+                .addMxf(16777216)
+                .addPverfm("PWWIN").build();
+
+        when(terminalService.save(any(String.class))).thenReturn(terminalModel);
+        when(utilsService.parseTerminalModel(any(String.class))).thenReturn(terminalModel);
+        when(terminalRepository.save(any(TerminalModel.class))).thenReturn(terminalModel);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/v1/api-dock/register")
+                        .content(payloadTestRequest)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
+                .andReturn();
+
+        assertEquals(200, mvcResult.getResponse().getStatus());
+        assertEquals("Terminal Salvo com sucesso! ID=" + terminalModel.getLogic(),mvcResult.getResponse().getContentAsString());
+        verify(terminalService, times(1)).save(payloadTestRequest);
+    }
+
+    @Test
+    public void test_register_endpoint_when_body_is_empty() throws Exception {
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/v1/api-dock/register")
+                        .content("")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
+                .andReturn();
+
+        assertEquals(400, mvcResult.getResponse().getStatus());
+    }
+
+    @Test
+    public void test_register_endpoint_when_body_is_null() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/v1/api-dock/convert")
+                        .content("null")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
+                .andReturn();
+
+        assertEquals(TerminalModelException.class, mvcResult.getResolvedException().getClass());
+    }
 }
