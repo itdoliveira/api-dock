@@ -2,6 +2,7 @@ package dock.controller;
 
 
 import dock.Application;
+import dock.config.TerminalContants;
 import dock.exception.TerminalModelException;
 import dock.model.TerminalModel;
 import dock.model.TerminalModelBuilder;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -142,15 +144,15 @@ public class TerminalControllerTest {
                 .andReturn();
 
         assertEquals(400, mvcResult.getResponse().getStatus());
+        assertEquals(HttpMessageNotReadableException.class, mvcResult.getResolvedException().getClass());
     }
 
     @Test
     public void test_register_endpoint_when_body_is_null() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/v1/api-dock/convert")
-                        .content("null")
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
                 .andReturn();
 
-        assertEquals(TerminalModelException.class, mvcResult.getResolvedException().getClass());
+        assertEquals(HttpMessageNotReadableException.class, mvcResult.getResolvedException().getClass());
     }
 }
