@@ -1,0 +1,9 @@
+
+.gradle/7.4/checksums/checksums.lock
+.gradle/7.4/checksums/md5-checksums.bin
+*.bin
+*.gradle
+*.idea
+*gradle
+*gradlew*
+*build*
