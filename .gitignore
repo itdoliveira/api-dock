@@ -5,5 +5,3 @@
 *.gradle
 *.idea
 *gradle
-*gradlew*
-*build*
