@@ -22,13 +22,13 @@ public class TerminalController {
     }
 
     @PostMapping(value = {"/convert"}, consumes = {"text/html; charset=utf-8"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<TerminalModel> convert(@RequestBody @NotNull String body) throws TerminalModelException {
+    public ResponseEntity<TerminalModel> convert(@RequestBody String body) throws TerminalModelException {
         TerminalModel terminalModel = terminalService.convert(body);
         return ResponseEntity.ok().body(terminalModel);
     }
 
     @PostMapping(value = {"/register"}, consumes = {"text/html; charset=utf-8"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<String> register(@RequestBody @NotNull String body) throws TerminalModelException {
+    public ResponseEntity<String> register(@RequestBody String body) throws TerminalModelException {
         TerminalModel terminalModel = terminalService.save(body);
         return ResponseEntity.ok().body(TerminalContants.TERMINAL_SALVO_COM_SUCESSO + terminalModel.getLogic());
     }

@@ -160,4 +160,20 @@ public class TerminalModel implements Serializable {
     public void setPverfm(String pverfm) {
         this.pverfm = pverfm;
     }
+
+    @Override
+    public String toString() {
+        return "TerminalModel{" +
+                "logic=" + logic +
+                ", serial='" + serial + '\'' +
+                ", model='" + model + '\'' +
+                ", sam=" + sam +
+                ", ptid='" + ptid + '\'' +
+                ", plat=" + plat +
+                ", version='" + version + '\'' +
+                ", mxr=" + mxr +
+                ", mxf=" + mxf +
+                ", pverfm='" + pverfm + '\'' +
+                '}';
+    }
 }

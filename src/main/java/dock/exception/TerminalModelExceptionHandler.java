@@ -1,6 +1,5 @@
-package dock.config;
+package dock.exception;
 
-import dock.exception.TerminalModelException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,5 +17,4 @@ public class TerminalModelExceptionHandler extends ResponseEntityExceptionHandle
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(exception.getMessage());
     }
-
 }
