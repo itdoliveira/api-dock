@@ -1,114 +1,61 @@
 package dock.service;
 
+import dock.config.TerminalContants;
+import dock.exception.TerminalModelException;
 import dock.model.TerminalModel;
-import dock.model.TerminalModelBuilder;
 import dock.repository.TerminalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TerminalService {
 
+    private final TerminalRepository terminalRepository;
+    private final TerminalUtilsService utilsService;
+
     @Autowired
-    TerminalRepository terminalRepository;
+    public TerminalService(TerminalRepository terminalRepository, TerminalUtilsService utilsService) {
+        this.terminalRepository = terminalRepository;
+        this.utilsService = utilsService;
+    }
 
-    public ResponseEntity convert(String body) {
+    public TerminalModel convert(String body) throws TerminalModelException {
+        return utilsService.parseTerminalModel(body);
+    }
+
+    public TerminalModel save(String body) throws TerminalModelException {
         try {
-            TerminalModel terminalModel = convertJsonToTerminalModel(body);
-            return ResponseEntity
-                    .accepted()
-                    .body(terminalModel);
+            TerminalModel terminalModel = utilsService.parseTerminalModel(body);
+            return terminalRepository.save(terminalModel);
         } catch (Exception e) {
-            return ResponseEntity
-                    .internalServerError()
-                    .body("Erro ao tentar converter as mensagem enviada. Erro: " + e);
-        }
-
-    }
-
-    public ResponseEntity save(String body) {
-        try {
-            TerminalModel terminalModel = convertJsonToTerminalModel(body);
-            terminalRepository.save(terminalModel);
-
-            return ResponseEntity
-                    .ok()
-                    .body("Terminal Salvo com sucesso!");
-        } catch (Exception e) {
-            return ResponseEntity
-                    .internalServerError()
-                    .body("Erro ao tentar salvar o Terminal. Exception: " + e);
+            throw new TerminalModelException(TerminalContants.TERMINAL_ERRO_AO_SALVAR);
         }
     }
 
-    public ResponseEntity consult(int logic) {
+    public TerminalModel query(int logic) throws TerminalModelException {
+        TerminalModel terminalModel = terminalRepository.findByLogic(logic);
 
-        TerminalModel temp = terminalRepository.findByLogic(logic);
-
-        if (temp == null) {
-            return ResponseEntity
-                    .internalServerError()
-                    .body("Terminal não localizado! Por favor insira um numero logico cadastrado.");
+        if (terminalModel == null) {
+            throw new TerminalModelException(TerminalContants.TERMINAL_NAO_LOCALIZADO);
         }
-
-        return ResponseEntity
-                .ok()
-                .body(temp);
+        return terminalModel;
     }
 
-    public ResponseEntity update(String body, int logic) {
+    public TerminalModel update(String body, int logic) throws TerminalModelException {
+        TerminalModel terminalModel = terminalRepository.findByLogic(logic);
+        TerminalModel tempBody = utilsService.parseTerminalModel(body);
 
-        TerminalModel temp = terminalRepository.findByLogic(logic);
-
-        TerminalModel tempBody = convertJsonToTerminalModel(body);
-
-        if (temp == null) {
-            return ResponseEntity
-                    .internalServerError()
-                    .body("Terminal não localizado! Por favor insira um numero logico cadastrado.");
+        if (terminalModel == null) {
+            throw new TerminalModelException(TerminalContants.TERMINAL_NAO_LOCALIZADO);
         }
 
         if (tempBody.getLogic() != logic) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Os numeros logicos não correspondem. Por favor, inserir o mesmo numero logico.");
+            throw new TerminalModelException(TerminalContants.TERMINAL_UPDATE_NUMERO_LOGICO_DIFERENTE);
         } else {
             terminalRepository.save(tempBody);
         }
 
-        return ResponseEntity
-                .ok()
-                .body("Informações atualizadas com sucesso!");
+        return terminalModel;
     }
 
-    public String[] splitText(String text) {
-
-        String[] split = text.split(";");
-
-        if (split != null && split.length < 10) {
-            return null;
-        }
-
-        return split;
-    }
-
-    public TerminalModel convertJsonToTerminalModel(String text) {
-
-        String[] textoSeparado = splitText(text);
-
-        return TerminalModelBuilder
-                .builder()
-                .addLogic(Integer.parseInt(textoSeparado[0]))
-                .addSerial(textoSeparado[1])
-                .addModel(textoSeparado[2])
-                .addSam(Integer.parseInt(textoSeparado[3]))
-                .addPtid(textoSeparado[4])
-                .addPlat(Integer.parseInt(textoSeparado[5]))
-                .addVersion(textoSeparado[6])
-                .addMxr(Integer.parseInt(textoSeparado[7]))
-                .addMxf(Integer.parseInt(textoSeparado[8]))
-                .addPverfm(textoSeparado[9])
-                .build();
-    }
 }
